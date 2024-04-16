@@ -20,25 +20,18 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            
-            
-            for (int i = 0; i < overheatTemperature; i++) 
+
+            int temp = GetTemperature();
+
+            if (temp >= overheatTemperature) return;
+
+            for (int i = 0; i < temp; i++) 
             {
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
             }
                       
-            //увеличение количества снарядов параллельно увеличению температуры
-
-
-
-            if (GetTemperature() >= overheatTemperature)
-                {
-                    return;
-                }
-                IncreaseTemperature();
-
-          
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
