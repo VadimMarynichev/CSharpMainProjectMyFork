@@ -12,7 +12,7 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        private float min;
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -45,10 +45,21 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            Vector2Int bestTarget = Vector2Int.zero;
+
+            foreach (Vector2Int i in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(i);
+
+                if (distance < min)
+                {
+                    min = distance;
+                    bestTarget = i;
+                }
             }
+
+            result.Clear();
+            result.Add(bestTarget);
             return result;
             ///////////////////////////////////////
         }
