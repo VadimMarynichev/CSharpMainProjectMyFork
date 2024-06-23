@@ -45,6 +45,8 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
+           
+            float min = float.MaxValue;
             Vector2Int bestTarget = Vector2Int.zero;
 
             foreach (Vector2Int i in result)
