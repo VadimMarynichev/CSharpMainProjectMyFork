@@ -23,14 +23,15 @@ namespace UnitBrains.Player
 
             int temp = GetTemperature();
 
-            if (temp >= overheatTemperature) return;
-
-            for (int i = 0; i < temp; i++) 
+            if (temp <= overheatTemperature) return;
             {
-                var projectile = CreateProjectile(forTarget);
-                AddProjectileToList(projectile, intoList);
-            }
-                      
+
+                for (int i = 0; i < temp; i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+            }         
             IncreaseTemperature();
         }
 
