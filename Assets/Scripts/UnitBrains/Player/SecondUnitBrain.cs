@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -13,6 +17,7 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
         private float min;
+        List<Vector2Int> _nextStep = new List<Vector2Int>();
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -36,7 +41,25 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (_nextStep.Count != 0)
+            {
+                Vector2Int position = Vector2Int.zero;
+                Vector2Int target =  _nextStep.First();
+                position.CalcNextStepTowards(target);
+                return position;
+            }
+            else
+            {
+                throw new System.Exception();
+            }                
+                      
+        }
+
+     
+        private bool CanAttack(Vector2Int target) 
+        {
+            IsTargetInRange(target);
+            return true;
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -44,26 +67,37 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-           
+            var results = GetAllTargets();
+            
             float min = float.MaxValue;
             Vector2Int bestTarget = Vector2Int.zero;
+           
 
-            foreach (Vector2Int i in result)
+            results = results.Where(result => !CanAttack (result)).ToList();
+
+            if (results.Count() != 0)
             {
-                float distance = DistanceToOwnBase(i);
 
-                if (distance < min)
+                foreach (Vector2Int result in results)
                 {
-                    min = distance;
-                    bestTarget = i;
-                }
-            }
+                    float distance = DistanceToOwnBase(result);
 
-            result.Clear();
-            result.Add(bestTarget);
-            return result;
-            ///////////////////////////////////////
+                    if (distance < min)
+                    {
+                        min = distance;
+                        bestTarget = result;
+                    }
+                }
+
+                _nextStep.Add(bestTarget);
+            }
+            else            
+            {
+               _nextStep.Add(runtimeModel.RoMap.Bases[0]);
+            }        
+            
+            return _nextStep;
+                        
         }
 
         public override void Update(float deltaTime, float time)
